@@ -1,20 +1,34 @@
-import React from "react";
-import { GalleryContainer } from "../gallery/galleryContainer";
-import { SearchComponent } from "./searchComponent";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import BlobView from "../testRenderBlob/blobView";
+import React from 'react';
+import { GalleryContainer } from '../gallery/galleryContainer';
+import { SearchComponent } from './searchComponent';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+// import BlobView from '../testRenderBlob/blobView';
+import { useLocation, useParams } from 'react-router-dom';
 
 export function MainPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  // const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState('');
+  const { viewParam } = useParams();
+  const [layout, setLayout] = useState();
 
   const searchTermHandler = (searchFieldValue) => {
     setSearchTerm(searchFieldValue);
   };
 
+  // useEffect(() => {
+  //   if (layout) {
+  //     setViewToShow(layout);
+  //   } else {
+  //     location.push('/base');
+  //   }
+  // }, [layout]);
+
+  // If we sort, maybe a sort hook here?
+
   return (
     <>
-      <BlobView></BlobView>
+      {/* <BlobView></BlobView> */}
       <div className="header">
         <a href="#default" className="logo">
           Optica
@@ -33,7 +47,13 @@ export function MainPage() {
       <div className="mainPage">
         <SearchComponent searchHandler={searchTermHandler} />
         {/* <ImageUploadComponent /> */}
-        <GalleryContainer submittedSearchTerm={searchTerm} />
+        {layout === '/base' && (
+          <GalleryContainer submittedSearchTerm={searchTerm} />
+        )}
+        {/* This second line - change string and component name */}
+        {layout === '/base' && (
+          <GalleryContainer submittedSearchTerm={searchTerm} />
+        )}
       </div>
     </>
   );
