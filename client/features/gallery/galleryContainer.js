@@ -1,21 +1,56 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 export function GalleryContainer() {
   const [images, setImages] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchImages() {
+    async function fetchInitialImages() {
       try {
         const response = await axios.get('http://localhost:3000/getRedis');
+        console.log('In useEffect for setImages');
         setImages(response.data.images);
       } catch (error) {
         console.error(error);
       }
     }
 
-    fetchImages();
+    fetchInitialImages();
   }, []);
+
+  const loadMoreImages = useCallback(async () => {
+    if (loading) return;
+    console.log('in loadMoreImages');
+    setLoading(true);
+    try {
+      console.log('in loadMoreImages try');
+      const response = await axios.get('http://localhost:3000/more');
+      console.log('axios get finished');
+      setImages((prevImages) => [...prevImages, ...response.data.images]);
+      setPageNumber((prevPageNumber) => prevPageNumber + 1);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  }, [loading]);
+
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.offsetHeight/2
+    ) {
+      console.log('about to loadMoreImages');
+      loadMoreImages();
+      console.log('past loadMoreImages');
+    }
+  }, [loadMoreImages]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {console.log('event listener added'); window.removeEventListener('scroll', handleScroll);}
+  }, [handleScroll]);
 
   return (
     <div>
@@ -23,13 +58,51 @@ export function GalleryContainer() {
       <div className="gallery">
         {images.map((imageUrl, index) => (
           <div className="gallery-item" key={index}>
-            <img src={imageUrl} alt={`Image ${index}`} />
+            <img className="newImg" src={imageUrl} alt={`Image ${index}`} />
           </div>
         ))}
       </div>
+      {loading && <p>Loading more images...</p>}
     </div>
   );
 }
+
+// import React, { useEffect, useState, useCallback } from 'react';
+// import axios from 'axios';
+
+// export function GalleryContainer() {
+//   const [images, setImages] = useState([]);
+//   const [pageNumber, setPageNumber] = useState(1);
+
+//   useEffect(() => {
+//     async function fetchImages() {
+//       try {
+//         const response = await axios.get('http://localhost:3000/getRedis');
+//         setImages(response.data.images);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     }
+
+ 
+//     fetchImages();
+//   }, []);
+
+
+
+//   return (
+//     <div>
+//       <h1>Gallery</h1>
+//       <div className="gallery">
+//         {images.map((imageUrl, index) => (
+//           <div className="gallery-item" key={index}>
+//             <img className="newImg" src={imageUrl} alt={`Image ${index}`} />
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 // import React from 'react';
 // import { ImageComponent } from './imageComponent';

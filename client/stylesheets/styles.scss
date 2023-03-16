@@ -76,7 +76,12 @@ h3 {
   background-color: rgb(40, 40, 40);
 }
 
-.galleryContainer {
+.newImg{
+  height: 24.46vw;
+  width: 24.46vw;
+}
+
+.gallery {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -84,20 +89,20 @@ h3 {
   column-gap: 5px;
 }
 
-.imageComponentContainer {
-  // display: inline-block;
-  // flex-grow: 1;
-  // width: 21%;
-  width: 24.5%;
-}
+// .imageComponentContainer {
+//   // display: inline-block;
+//   // flex-grow: 1;
+//   // width: 21%;
+//   width: 24.5%;
+// }
 
-.imageComponent {
-  // width: 350px;
-  // display: inline-block;
-  // flex-grow: 1;
-  width: 100%;
-  border-radius: 15px;
-}
+// .imageComponent {
+//   // width: 350px;
+//   // display: inline-block;
+//   // flex-grow: 1;
+//   width: 100%;
+//   border-radius: 15px;
+// }
 
 /* Style the header with a grey background and some padding */
 .header {

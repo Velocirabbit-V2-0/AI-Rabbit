@@ -9,13 +9,13 @@ const redisClient = Redis.createClient();
 const { promisify } = require('util');
 // const fetch = require('node-fetch');
 
+const initialimages = mongoose.model('initialimages', new mongoose.Schema({}));
+
 async function initialize() {
   await mongoose.connect(process.env.MONGO_URI);
 
-  const initialimages = mongoose.model('initialimages', new mongoose.Schema({}));
-
   try {
-    const docs = await initialimages.aggregate([{ $sample: { size: 5 } }]);
+    const docs = await initialimages.aggregate([{ $sample: { size: 64 } }]);
     const redisSetAsync = promisify(redisClient.set).bind(redisClient);
     const promises = docs.map(async element => {
       const response = await fetch(element.url);
@@ -71,6 +71,46 @@ app.get('/getRedis', async (req, res) => {
   }
 });
 
+app.get('/more', async (req, res) => {
+  try {
+    const redisKeysAsync = promisify(redisClient.keys).bind(redisClient);
+    const redisMGetAsync = promisify(redisClient.mget).bind(redisClient);
+    const redisFlush = promisify(redisClient.flushdb).bind(redisClient);
+
+    await redisFlush();
+    const docs = await initialimages.aggregate([{ $sample: { size: 16 } }]);
+    const redisSetAsync = promisify(redisClient.set).bind(redisClient);
+    const promises = docs.map(async element => {
+      const response = await fetch(element.url);
+      const buffer = Buffer.from(await response.arrayBuffer());
+      const imageData = buffer.toString('base64');
+      await redisSetAsync(element._id.toString(), imageData);
+      console.log(`Stored image ${element._id} in Redis cache.`);
+    });
+    const tempUrls = await Promise.all(promises);
+    // Retrieve all keys in Redis cache
+    const keys = await redisKeysAsync('*');
+    // Retrieve values for all keys in Redis cache
+    const values = await redisMGetAsync(keys);
+
+    // Decode the base64 encoded PNG image data and create an array of image URLs
+    const imageUrls = values.map(value => {
+      if (value) {
+        return "data:image/png;base64," + value;
+      } else {
+        return null;
+      }
+    });
+
+    res.json({ images: imageUrls });
+    
+  }
+
+
+    // res.json({ images: imageUrls });
+   catch (err) {
+    console.log('error in the /more endpoint: ' + err)}
+})
 
 // const imageController = require("./controllers/imageController");
 const imagesV2Router = require("./routes/imagesV2Router");
