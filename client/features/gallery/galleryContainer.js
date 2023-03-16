@@ -2,54 +2,60 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 export function GalleryContainer() {
+  // Declaration of various hooks - self explanatory
   const [images, setImages] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [loading, setLoading] = useState(false);
-
+  // On page load, fetches initial set of images from redis db
   useEffect(() => {
     async function fetchInitialImages() {
       try {
         const response = await axios.get('http://localhost:3000/getRedis');
-        console.log('In useEffect for setImages');
+        // places received images into image array
         setImages(response.data.images);
       } catch (error) {
         console.error(error);
       }
     }
-
+    // Runs function that we just declared
     fetchInitialImages();
   }, []);
-
+  // Function for loading more images
   const loadMoreImages = useCallback(async () => {
+    // Loading variable -> is set to true if info is loading into redis db
     if (loading) return;
-    console.log('in loadMoreImages');
+    // Sets loading to true in order to ensure function doesn't run before one instance has finished (either due to quick
+    // scrolling, lag etc.)
     setLoading(true);
     try {
-      console.log('in loadMoreImages try');
+      // Axios call to retrieve the next 16 images
       const response = await axios.get('http://localhost:3000/more');
-      console.log('axios get finished');
+      // Set images hook used to append the new response images to our array of images to render
       setImages((prevImages) => [...prevImages, ...response.data.images]);
+      // Page number increase - this is used along with the screen size to determine when we need begin calling the load
+      // more images function on scroll events
       setPageNumber((prevPageNumber) => prevPageNumber + 1);
     } catch (error) {
       console.error(error);
     }
+    // Returns loading to false on completion
     setLoading(false);
   }, [loading]);
 
+  // A func called on user scrolls
   const handleScroll = useCallback(() => {
+    // Determines whether to call loadmoreimages - based on how close user is to the bottom of the currently loaded imgs
     if (
       window.innerHeight + document.documentElement.scrollTop + 1 >=
       document.documentElement.offsetHeight/2
     ) {
-      console.log('about to loadMoreImages');
       loadMoreImages();
-      console.log('past loadMoreImages');
     }
   }, [loadMoreImages]);
-
+  // Adds the event listener on page load
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-    return () => {console.log('event listener added'); window.removeEventListener('scroll', handleScroll);}
+    return () => {window.removeEventListener('scroll', handleScroll);}
   }, [handleScroll]);
 
   return (
