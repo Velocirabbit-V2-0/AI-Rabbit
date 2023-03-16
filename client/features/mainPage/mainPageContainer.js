@@ -1,7 +1,7 @@
 import React from "react";
 import { GalleryContainer } from "../gallery/galleryContainer";
 import { SearchComponent } from "./searchComponent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { useParams, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import BlobView from "../testRenderBlob/blobView";
@@ -10,6 +10,7 @@ export function MainPage() {
   const [searchTerm, setSearchTerm] = useState("");
   // const { viewParam } = useParams(); 
   const [location, setLocation] = useState('grid');
+
 
   const searchTermHandler = (searchFieldValue) => {
     setSearchTerm(searchFieldValue);
@@ -22,7 +23,7 @@ export function MainPage() {
 
   return (
     <>
-      <BlobView></BlobView>
+      {/* <BlobView></BlobView> */}
       <div className="header">
         <a href="#default" className="logo">
           PsychOptica
@@ -41,7 +42,13 @@ export function MainPage() {
       <div className="mainPage">
         <SearchComponent searchHandler={searchTermHandler} />
         {/* <ImageUploadComponent /> */}
-        <GalleryContainer submittedSearchTerm={searchTerm} />
+        {layout === '/base' && (
+          <GalleryContainer submittedSearchTerm={searchTerm} />
+        )}
+        {/* This second line - change string and component name */}
+        {layout === '/base' && (
+          <GalleryContainer submittedSearchTerm={searchTerm} />
+        )}
       </div>
     </>
   );
