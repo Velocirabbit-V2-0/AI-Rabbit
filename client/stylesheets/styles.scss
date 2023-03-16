@@ -75,8 +75,13 @@ h3 {
   border: 1.2px solid rgba(255, 255, 255, 0.8);
   background-color: rgb(40, 40, 40);
 }
-
-.galleryContainer {
+//================grid=================
+.newImg{
+  height: 24.46vw;
+  width: 24.46vw;
+}
+//===================grid==============
+.gallery {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -84,20 +89,24 @@ h3 {
   column-gap: 5px;
 }
 
-.imageComponentContainer {
-  // display: inline-block;
-  // flex-grow: 1;
-  // width: 21%;
-  width: 24.5%;
+//===================================aspect ratio friendly=======================
+.gallery-item {
+  max-width: 24.46vw; // set your desired maximum width here
+  margin: auto; // center the image
 }
 
-.imageComponent {
-  // width: 350px;
-  // display: inline-block;
-  // flex-grow: 1;
-  width: 100%;
-  border-radius: 15px;
+.gallery-item img {
+  width: 100%; // set the width of the image to 100% to maintain aspect ratio
+  height: auto; // ensure the image maintains its aspect ratio
 }
+
+@media only screen and (min-aspect-ratio: 2/1) {
+  .gallery-item {
+    max-width: 48.92vw; // double the maximum width for wide images
+  }
+}
+//===================================aspect ratio friendly=======================
+
 
 /* Style the header with a grey background and some padding */
 .header {

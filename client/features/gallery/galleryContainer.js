@@ -1,21 +1,62 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 export function GalleryContainer() {
+  // Declaration of various hooks - self explanatory
   const [images, setImages] = useState([]);
-
+  const [pageNumber, setPageNumber] = useState(1);
+  const [loading, setLoading] = useState(false);
+  // On page load, fetches initial set of images from redis db
   useEffect(() => {
-    async function fetchImages() {
+    async function fetchInitialImages() {
       try {
         const response = await axios.get('http://localhost:3000/getRedis');
+        // places received images into image array
         setImages(response.data.images);
       } catch (error) {
         console.error(error);
       }
     }
-
-    fetchImages();
+    // Runs function that we just declared
+    fetchInitialImages();
   }, []);
+  // Function for loading more images
+  const loadMoreImages = useCallback(async () => {
+    // Loading variable -> is set to true if info is loading into redis db
+    if (loading) return;
+    // Sets loading to true in order to ensure function doesn't run before one instance has finished (either due to quick
+    // scrolling, lag etc.)
+    setLoading(true);
+    try {
+      // Axios call to retrieve the next 16 images
+      const response = await axios.get('http://localhost:3000/more');
+      // Set images hook used to append the new response images to our array of images to render
+      setImages((prevImages) => [...prevImages, ...response.data.images]);
+      // Page number increase - this is used along with the screen size to determine when we need begin calling the load
+      // more images function on scroll events
+      setPageNumber((prevPageNumber) => prevPageNumber + 1);
+    } catch (error) {
+      console.error(error);
+    }
+    // Returns loading to false on completion
+    setLoading(false);
+  }, [loading]);
+
+  // A func called on user scrolls
+  const handleScroll = useCallback(() => {
+    // Determines whether to call loadmoreimages - based on how close user is to the bottom of the currently loaded imgs
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.offsetHeight/2
+    ) {
+      loadMoreImages();
+    }
+  }, [loadMoreImages]);
+  // Adds the event listener on page load
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {window.removeEventListener('scroll', handleScroll);}
+  }, [handleScroll]);
 
   return (
     <div>
@@ -23,13 +64,51 @@ export function GalleryContainer() {
       <div className="gallery">
         {images.map((imageUrl, index) => (
           <div className="gallery-item" key={index}>
-            <img src={imageUrl} alt={`Image ${index}`} />
+            <img className="newImg" src={imageUrl} alt={`Image ${index}`} />
           </div>
         ))}
       </div>
+      {loading && <p>Loading more images...</p>}
     </div>
   );
 }
+
+// import React, { useEffect, useState, useCallback } from 'react';
+// import axios from 'axios';
+
+// export function GalleryContainer() {
+//   const [images, setImages] = useState([]);
+//   const [pageNumber, setPageNumber] = useState(1);
+
+//   useEffect(() => {
+//     async function fetchImages() {
+//       try {
+//         const response = await axios.get('http://localhost:3000/getRedis');
+//         setImages(response.data.images);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     }
+
+ 
+//     fetchImages();
+//   }, []);
+
+
+
+//   return (
+//     <div>
+//       <h1>Gallery</h1>
+//       <div className="gallery">
+//         {images.map((imageUrl, index) => (
+//           <div className="gallery-item" key={index}>
+//             <img className="newImg" src={imageUrl} alt={`Image ${index}`} />
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 // import React from 'react';
 // import { ImageComponent } from './imageComponent';

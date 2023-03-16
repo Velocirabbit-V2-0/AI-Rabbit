@@ -6,7 +6,7 @@ export function SearchComponent({ searchHandler }) {
 
   return (
     <div>
-      <h1>Optica</h1>
+      <h1>PsychOptica</h1>
       <h3>The OpenAI DALL&#8226;E Search Engine</h3>
       <form
         className="search"

@@ -1,37 +1,32 @@
-import React from 'react';
-import { GalleryContainer } from '../gallery/galleryContainer';
-import { SearchComponent } from './searchComponent';
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-// import BlobView from '../testRenderBlob/blobView';
-import { useLocation, useParams } from 'react-router-dom';
+import React from "react";
+import { GalleryContainer } from "../gallery/galleryContainer";
+import { SearchComponent } from "./searchComponent";
+import { useState, useEffect } from "react";
+// import { useParams, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import BlobView from "../testRenderBlob/blobView";
 
 export function MainPage() {
-  // const location = useLocation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const { viewParam } = useParams();
-  const [layout, setLayout] = useState();
+  const [searchTerm, setSearchTerm] = useState("");
+  // const { viewParam } = useParams(); 
+  const [location, setLocation] = useState('grid');
+
 
   const searchTermHandler = (searchFieldValue) => {
     setSearchTerm(searchFieldValue);
   };
 
   // useEffect(() => {
-  //   if (layout) {
-  //     setViewToShow(layout);
-  //   } else {
-  //     location.push('/base');
-  //   }
-  // }, [layout]);
-
-  // If we sort, maybe a sort hook here?
+  //   if (viewParam) {
+  //     setLocation(viewParam);
+  //   }}, [viewParam]); 
 
   return (
     <>
       {/* <BlobView></BlobView> */}
       <div className="header">
         <a href="#default" className="logo">
-          Optica
+          PsychOptica
         </a>
         <div className="header-right">
           <Link to="/" className="active">
