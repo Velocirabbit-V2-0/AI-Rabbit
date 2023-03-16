@@ -22,7 +22,7 @@ export function MainPage() {
 
   return (
     <>
-      <BlobView></BlobView>
+      {/* <BlobView></BlobView> */}
       <div className="header">
         <a href="#default" className="logo">
           PsychOptica
@@ -30,6 +30,9 @@ export function MainPage() {
         <div className="header-right">
           <Link to="/" className="active">
             Home
+          </Link>
+          <Link to="/favorites" className='active'>
+            Favorites
           </Link>
           <a href="#contact">Contact</a>
           <a href="#about">About</a>

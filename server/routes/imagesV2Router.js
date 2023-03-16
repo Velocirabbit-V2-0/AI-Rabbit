@@ -16,4 +16,8 @@ router.get("/", (req, res) => {
   res.status(200).json("images v2");
 });
 
+router.get("/get_all_images", imagesController.getAllImages, (req, res) => {
+  res.status(200).json(res.locals.images);
+});
+
 module.exports = router;
