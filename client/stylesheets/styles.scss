@@ -175,3 +175,19 @@ h3 {
     float: none;
   }
 }
+
+.favGrid{
+  display: grid;
+  grid-template-columns: 1fr 1fr ;
+  grid-gap: 10px;
+  padding: 10px;
+}
+.favImg{
+  max-width: 400px;
+  max-height: 400px;
+}
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+  padding-left: 150px;
+  padding-bottom: 50px;
+}

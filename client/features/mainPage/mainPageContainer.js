@@ -32,6 +32,9 @@ export function MainPage() {
           <Link to="/" className="active">
             Home
           </Link>
+          <Link to="/favorites" className='active'>
+            Favorites
+          </Link>
           <a href="#contact">Contact</a>
           <a href="#about">About</a>
           <Link to="/login" className="loginButton">

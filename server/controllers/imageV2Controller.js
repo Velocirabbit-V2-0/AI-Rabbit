@@ -1,5 +1,4 @@
 const Image = require("../models/Image");
-
 class ImageController {
   async saveImage(req, res, next) {
     try {
@@ -14,7 +13,6 @@ class ImageController {
       next(err);
     }
   }
-
   async getImageById(req, res, next) {
     try {
       const { id: _id } = req.query;
@@ -26,8 +24,17 @@ class ImageController {
       next(err);
     }
   }
+  async getAllImages(req, res, next) {
+    try {
+      const images = await Image.find();
+      // console.log(images);
+      res.locals.images = images;
+      next();
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
 }
-
 const imageController = new ImageController();
-
 module.exports = imageController;
